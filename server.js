@@ -7,12 +7,14 @@ var mongoose = require('mongoose');
 var request = require('request');
 var cheerio = require('cheerio');
 
+
 //Middleware
 app.use(logger('dev'));
 app.use(bodyParser.urlencoded({
     extended: false
 }));
 app.use(express.static('public'));
+
 
 //Database configuration
 mongoose.connect('mongodb://localhost/mongoosescraper');
@@ -25,9 +27,11 @@ db.once('open', function() {
     console.log('Mongoose connection successful.');
 });
 
+
 //Require Schemas
 var Note = require('./models/Note.js');
 var Article = require('./models/Article.js');
+
 
 // Routes
 app.get('/', function(req, res) {
@@ -68,27 +72,14 @@ app.get('/articles', function(req, res) {
     });
 });
 
-app.get('/articles/:id', function(req, res) {
-    Article.findOne({
-            '_id': req.params.id
-        })
-        .populate('note')
-        .exec(function(err, doc) {
-            if (err) {
-                console.log(err);
-            } else {
-                res.json(doc);
-            }
-        });
-});
-
 app.post('/articles/:id', function(req, res) {
     var newNote = new Note(req.body);
-
     newNote.save(function(err, doc) {
         if (err) {
             console.log(err);
         } else {
+            // console.log(doc.body);
+            res.send(doc);
             Article.findOneAndUpdate({
                     '_id': req.params.id
                 }, {
@@ -97,13 +88,39 @@ app.post('/articles/:id', function(req, res) {
                 .exec(function(err, doc) {
                     if (err) {
                         console.log(err);
-                    } else {
-                        res.send(doc);
                     }
                 });
         }
     });
 });
+
+app.get('/notes', function(req, res) {
+    Note.find({}, function(err, doc) {
+        if (err) {
+            console.log(err);
+        } else {
+            res.json(doc);
+            console.log("GET NOTES ROUTE_____"+doc);
+        }
+    });
+});
+
+app.post('/notes/:id', function(req, res) {
+  console.log("hitting notes:id route...");
+  console.log(req.body);
+  console.log(req.params);
+    // Note.findOne({
+    //         '_id': req.params.body
+    //     })
+    //     .exec(function(err, doc) {
+    //         if (err) {
+    //             console.log(err);
+    //         } else {
+    //             res.json(doc);
+    //         }
+    //     });
+});
+
 
 //Server connection
 app.listen(3006, function() {

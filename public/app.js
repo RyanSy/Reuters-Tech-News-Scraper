@@ -1,32 +1,70 @@
-$.getJSON('/articles', function(data) {
-  var articles = data,
-      counter = 0;
-  $('#articles').append("<h3>"+data[counter].title+"</h3><br><p>"+data[counter].summary+"</p>");
-  $('#nextArticle').click(function(){
-    $('#articles').empty();
-    counter = (counter + 1)%articles.length;
-    $('#articles').append("<h3>"+data[counter].title+"</h3><br><p>"+data[counter].summary+"</p>");
+$(document).ready(function() {
+  $('#main').hide();
+  $('#launch').on('click', function() {
+    $('#main').show();
+    $('#launch').hide();
   });
-});
 
-$(document).on('click', '#saveNote', function(){
-  var thisId = $(this).attr('data-id');
+  $.getJSON('/articles', function(data) {
+    var articles = data,
+      counter = 0;
 
-  $.ajax({
-    method: "POST",
-    url: "/articles/" + thisId,
-    data: {
-      body: $('#bodyinput').val()
-    }
-  })
-    .done(function(data) {
-      console.log("POST ROUTE TO SAVE NOTE"+data);
-      $('#notes').empty();
-      $('#deleteNoteBox').append(data);
+    $('#saveNote').attr('data-id', articles[counter]._id);
+    $('#articles').append("<h3>"+articles[counter].title+"</h3><p>"+articles[counter].summary+"</p>");
+
+
+    $('#nextArticle').click(function(){
+      $('#articles').empty();
+      counter = (counter + 1)%articles.length;
+      $('#articles').append("<h3>"+articles[counter].title+"</h3><p>"+articles[counter].summary+"</p>");
+      $('#saveNote').attr('data-id', articles[counter]._id);
+      $.ajax({
+        method: "POST",
+        dataType: "json",
+        url: "/notes/" + articles[counter].note,
+        data: {
+          id: articles[counter].note
+        }
+      })
+        .done(function(data) {
+          console.log("data ---> "+data);
+        });
+    });
+    $('#previousArticle').click(function(){
+      $('#articles').empty();
+      counter = (counter - 1)%articles.length;
+      $('#articles').append("<h3>"+articles[counter].title+"</h3><p>"+articles[counter].summary+"</p>");
+      $('#saveNote').attr('data-id', articles[counter]._id);
+
     });
 
-  $('#bodyinput').val("");
 
 
+  });
+
+
+  $(document).on('click', '#saveNote', function(){
+    var thisId = $(this).attr('data-id');
+    var body = $('#bodyinput').val();
+    console.log("This is the article ID: "+thisId);
+
+    $.ajax({
+      method: "POST",
+      dataType: "json",
+      url: "/articles/" + thisId,
+      data: {
+        body: body
+      }
+    })
+      .done(function(data) {
+        console.log(data._id);
+        $('#deleteNoteBox').text(data.body);
+      });
+
+    $('#bodyinput').val("");
+
+  // //get note where note._id = articles.note
+
+  });
 
 });
