@@ -1,6 +1,6 @@
 $(document).ready(function() {
   $('#main').hide();
-  $('#launch').on('click', function() {
+  $('#launch').click(function() {
     $('#main').show();
     $('#launch').hide();
   });
@@ -10,60 +10,101 @@ $(document).ready(function() {
       counter = 0;
 
     $('#saveNote').attr('data-id', articles[counter]._id);
+    $('#deleteNote').attr('data-id', articles[counter]._id);
     $('#articles').append("<h3>"+articles[counter].title+"</h3><p>"+articles[counter].summary+"</p>");
+    $.ajax({
+      method: "POST",
+      dataType: "json",
+      url: "/notes",
+      data: {
+        _id: articles[counter].note
+      }
+    })
+      .done(function(data) {
+        $('#deleteNoteBox').text(data.body);
+      });
 
 
     $('#nextArticle').click(function(){
       $('#articles').empty();
+      $('#deleteNoteBox').empty();
       counter = (counter + 1)%articles.length;
       $('#articles').append("<h3>"+articles[counter].title+"</h3><p>"+articles[counter].summary+"</p>");
       $('#saveNote').attr('data-id', articles[counter]._id);
+      $('#deleteNote').attr('data-id', articles[counter]._id);
       $.ajax({
         method: "POST",
         dataType: "json",
-        url: "/notes/" + articles[counter].note,
+        url: "/notes",
         data: {
-          id: articles[counter].note
+          _id: articles[counter].note
         }
       })
-        .done(function(data) {
-          console.log("data ---> "+data);
+        .done(function(result) {
+          $('#deleteNoteBox').text(result.body);
         });
     });
+
     $('#previousArticle').click(function(){
       $('#articles').empty();
+      $('#deleteNoteBox').empty();
       counter = (counter - 1)%articles.length;
       $('#articles').append("<h3>"+articles[counter].title+"</h3><p>"+articles[counter].summary+"</p>");
       $('#saveNote').attr('data-id', articles[counter]._id);
-
+      $('#deleteNote').attr('data-id', articles[counter]._id);
+      $.ajax({
+        method: "POST",
+        dataType: "json",
+        url: "/notes",
+        data: {
+          _id: articles[counter].note
+        }
+      })
+        .done(function(data) {
+          $('#deleteNoteBox').text(data.body);
+        });
     });
 
+    $('#saveNote').click(function(){
+      var thisId = $(this).attr('data-id');
+      var body = $('#bodyinput').val();
 
+      $.ajax({
+        method: "POST",
+        dataType: "json",
+        url: "/articles/" + thisId,
+        data: {
+          body: body
+        }
+      })
+        .done(function(data) {
+          console.log("- SAVE NOTE -");
+          console.log(data);
+          $('#deleteNoteBox').text(data.body);
+        });
 
-  });
+      $('#bodyinput').val("");
+    });
 
+    $('#deleteNote').click(function(){
+      var thisId = $(this).attr('data-id');
 
-  $(document).on('click', '#saveNote', function(){
-    var thisId = $(this).attr('data-id');
-    var body = $('#bodyinput').val();
-    console.log("This is the article ID: "+thisId);
+      $.ajax({
+        method: "POST",
+        dataType: "json",
+        url: "/notes/delete/",
+        data: {
+          _id: thisId
+        }
+      })
+        .done(function(data) {
+          console.log("- DELETE NOTE -");
+          console.log(data);
+          $('#deleteNoteBox').val("");
+        });
 
-    $.ajax({
-      method: "POST",
-      dataType: "json",
-      url: "/articles/" + thisId,
-      data: {
-        body: body
-      }
-    })
-      .done(function(data) {
-        console.log(data._id);
-        $('#deleteNoteBox').text(data.body);
-      });
-
-    $('#bodyinput').val("");
-
-  // //get note where note._id = articles.note
+      $('#bodyinput').val("");
+    });
 
   });
 

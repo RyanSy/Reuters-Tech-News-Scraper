@@ -78,8 +78,9 @@ app.post('/articles/:id', function(req, res) {
         if (err) {
             console.log(err);
         } else {
-            // console.log(doc.body);
+            console.log(doc.body);
             res.send(doc);
+            console.log(req.params.id);
             Article.findOneAndUpdate({
                     '_id': req.params.id
                 }, {
@@ -94,31 +95,45 @@ app.post('/articles/:id', function(req, res) {
     });
 });
 
-app.get('/notes', function(req, res) {
-    Note.find({}, function(err, doc) {
-        if (err) {
-            console.log(err);
-        } else {
-            res.json(doc);
-            console.log("GET NOTES ROUTE_____"+doc);
-        }
-    });
+// app.get('/notes', function(req, res) {
+//     Note.find({}, function(err, doc) {
+//         if (err) {
+//             console.log(err);
+//         } else {
+//             res.json(doc);
+//             console.log("GET NOTES ROUTE_____"+doc);
+//         }
+//     });
+// });
+
+app.post('/notes', function(req, res) {
+  console.log(req.body);
+    Note.findOne({
+            '_id':req.body
+        })
+        .exec(function(err, doc) {
+            if (err) {
+                console.log("- Error: "+err);
+            } else {
+                res.json(doc);
+                console.log("- DOC: "+doc);
+            }
+        });
 });
 
-app.post('/notes/:id', function(req, res) {
-  console.log("hitting notes:id route...");
+app.post('/notes/delete', function(req, res) {
   console.log(req.body);
-  console.log(req.params);
-    // Note.findOne({
-    //         '_id': req.params.body
-    //     })
-    //     .exec(function(err, doc) {
-    //         if (err) {
-    //             console.log(err);
-    //         } else {
-    //             res.json(doc);
-    //         }
-    //     });
+    Note.findOneAndRemove({
+            '_id':req.body
+        })
+        .exec(function(err, doc) {
+            if (err) {
+                console.log("- Error: "+err);
+            } else {
+                res.json(doc);
+                console.log("- DOC: "+doc);
+            }
+        });
 });
 
 
