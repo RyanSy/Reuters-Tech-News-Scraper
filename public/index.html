@@ -11,27 +11,27 @@
 </head>
 
 <body>
-    <div class="container">
+    <div class="jumbotron container" style="background-color: white;">
       <h1 class="text-center">Reuters Tech News Scraper</h1>
       <div class="col-md-12 text-center">
-          <button id="launch">Launch</button>
+          <button class="btn btn-info" id="launch">Launch</button>
       </div>
       <div id="main">
         <div class="col-md-4 text-center" id="notes">
-            <textarea id="bodyinput"></textarea>
+            <textarea class="form-control" id="bodyinput"></textarea>
             <br>
-            <button id="saveNote">Save Note</button>
+            <button class="btn btn-success" id="saveNote">Save Note</button>
         </div>
         <div class="col-md-4 text-center">
             <div id="articles"></div>
             <br>
-            <button id="previousArticle">Previous Article</button>
-            <button id="nextArticle">Next Article</button>
+            <button class="btn btn-primary" id="previousArticle">Previous Article</button>
+            <button class="btn btn-primary" id="nextArticle">Next Article</button>
         </div>
         <div class="col-md-4 text-center">
-            <textarea id="deleteNoteBox"></textarea>
+            <textarea class="form-control" id="deleteNoteBox"></textarea>
             <br>
-            <button id="deleteNote">Delete Note</button>
+            <button class="btn btn-danger" id="deleteNote">Delete Note</button>
         </div>
       </div>
     </div>

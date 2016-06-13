@@ -33,7 +33,7 @@ var Note = require('./models/Note.js');
 var Article = require('./models/Article.js');
 
 
-// Routes
+//Routes
 app.get('/', function(req, res) {
     res.send(index.html);
 });
@@ -95,17 +95,6 @@ app.post('/articles/:id', function(req, res) {
     });
 });
 
-// app.get('/notes', function(req, res) {
-//     Note.find({}, function(err, doc) {
-//         if (err) {
-//             console.log(err);
-//         } else {
-//             res.json(doc);
-//             console.log("GET NOTES ROUTE_____"+doc);
-//         }
-//     });
-// });
-
 app.post('/notes', function(req, res) {
   console.log(req.body);
     Note.findOne({
@@ -113,10 +102,10 @@ app.post('/notes', function(req, res) {
         })
         .exec(function(err, doc) {
             if (err) {
-                console.log("- Error: "+err);
+                console.log(err);
             } else {
                 res.json(doc);
-                console.log("- DOC: "+doc);
+                console.log(doc);
             }
         });
 });
@@ -128,10 +117,9 @@ app.post('/notes/delete', function(req, res) {
         })
         .exec(function(err, doc) {
             if (err) {
-                console.log("- Error: "+err);
+                console.log(err);
             } else {
-                res.json(doc);
-                console.log("- DOC: "+doc);
+                console.log("Note Deleted");
             }
         });
 });
